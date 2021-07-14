@@ -1,6 +1,6 @@
 #!/bin/bash
 
-DOCKER_IMG_NAME="intellij-cpp"
+DOCKER_IMG_NAME="alexprivalov/intellij-cpp"
 TAG="debian8"
 docker_image_name="${DOCKER_IMG_NAME}:${TAG}"
 
