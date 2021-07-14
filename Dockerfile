@@ -9,7 +9,7 @@ ARG IDEA_BUILD=212.4638.7
 
 RUN  \
   apt-get update && apt-get install --no-install-recommends -y \
-  mc git curl openssh-client less sudo \
+  mc git curl openssh-client less sudo libxml2-dev libspeexdsp-dev libopus-dev libgsm1-dev \
   libxtst-dev libxext-dev libxrender-dev libfreetype6-dev \
   libfontconfig1 libgtk2.0-0 libxslt1.1 libxxf86vm1 build-essential \
   ca-certificates sshpass automake vim gcc make cmake bash-completion \

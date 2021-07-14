@@ -36,11 +36,11 @@ function main {
 
     hint_msg=$(echo -e "\
         ################################################################################\n\
+        # Docker image: ${docker_image_name}                                            \n\
         # Will mount host path \"${resolved_dir}\" to container path \"${resolved_dir}\"\n\
-        # Will run \"make ${make_target}\" inside \"${resolved_dir}\" in the container  \n\
         # The source is available at \"${resolved_dir}\".                               \n\
         # Type "Ctrl+D" to exit from container.                                         \n\
-        # root password: \"root\"                                                        \n\
+        # root password: \"root\"                                                       \n\
         ################################################################################\n\
     ")
 
@@ -49,7 +49,24 @@ function main {
     && cd ${resolved_dir} \
     && bash \
     ")
+    
+    docker pull ${docker_image_name}
+    containers_to_del=$(docker ps -a -f status=exited | grep ${docker_image_name} | awk '{ print $1 }')
+    if [ ! -z "${containers_to_del}" ]; then
+        echo ""
+        echo "Will remove ${docker_image_name}* stopped containers:"
+        echo "`docker ps -a -f status=exited | grep ${docker_image_name} | awk '{ print $1, $2 }'`"
+        echo ""
+        docker rm $(docker ps -a -f status=exited | grep ${docker_image_name} | awk '{ print $1 }') || true #remove stopped containers
+    fi
 
+    imgs_for_del=$(docker images -f "dangling=true" -q)
+    if [ ! -z "${imgs_for_del}" ]; then
+        echo "Will remove dangling layers"
+        docker rmi $(docker images -f "dangling=true" -q) || true #clean docker dangling images with <none>:<none>
+        echo ""
+    fi
+    
     docker run --rm ${additional_docker_options} \
                     -v ${resolved_dir}:${resolved_dir} \
                     --net=host \
